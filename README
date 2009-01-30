@@ -5,9 +5,13 @@ This is 'eldap', the Erlang LDAP library.
 It exports an API that can do all possible operations
 you may want to do against an LDAP server. The code has
 been tested to work at some point, but only the bind
-and search operations are running daily in our (Nortel's)
-products, so there may be bugs lurking in some parts of
-the code.
+and search operations are running daily in our products,
+so there may be bugs lurking in some parts of the code.
+
+To just use eldap for doing authentication, do like in:
+
+ {ok,X} = eldap:open(["ldap.mycorp.com"], []).
+ eldap:simple_bind(X, "uid=tobbe,ou=People,dc=mycorp,dc=com", "passwd").
 
 In the doc/README.example you'll find a trace from a
 Erlang shell session as an example on how to setup a

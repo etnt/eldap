@@ -1,7 +1,7 @@
 
 ERLC = erlc
 EBIN_DIR = ../ebin
-ERLC_FLAGS += -I ./src +debug_info
+ERLC_FLAGS += -I ./src -I ../include +debug_info
 ERL_OBJECTS := ${EBIN_DIR}/eldap.beam ${EBIN_DIR}/ELDAPv3.beam
 
 .SUFFIXES: .asn .erl .beam
