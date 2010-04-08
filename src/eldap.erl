@@ -4,6 +4,9 @@
 %%% Function: Erlang client LDAP implementation according RFC 2251,2253
 %%%           and 2255. The interface is based on RFC 1823, and
 %%%           draft-ietf-asid-ldap-c-api-00.txt
+%%%
+%%% Copyright (c) 2010 Torbjorn Tornkvist
+%%% See MIT-LICENSE at the top dir for licensing information.
 %%% --------------------------------------------------------------------
 -vc('$Id$ ').
 -export([open/1,open/2,simple_bind/3,controlling_process/2,
