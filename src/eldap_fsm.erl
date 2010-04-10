@@ -1,11 +1,13 @@
 -module(eldap_fsm).
 %%% --------------------------------------------------------------------
-%%% Created:  12 Oct 2000 by Tobbe <tnt@home.se>
+%%% Created:  12 Oct 2000 by Tobbe 
 %%% Function: Erlang client LDAP implementation according RFC 2251.
 %%%           The interface is based on RFC 1823, and
 %%%           draft-ietf-asid-ldap-c-api-00.txt
 %%%
-%%% Copyright (C) 2000  Torbjörn Törnkvist, tnt@home.se
+%%% Copyright (C) 2000  Torbjörn Törnkvist
+%%% Copyright (c) 2010 Torbjorn Tornkvist <tobbe@tornkvist.org>
+%%% See MIT-LICENSE at the top dir for licensing information.
 %%% 
 %%% This program is free software; you can redistribute it and/or modify
 %%% it under the terms of the GNU General Public License as published by
@@ -30,7 +32,6 @@
 %%% Can be configured with start_link parameters or use a config file to get
 %%% host to connect to, dn, password, log function etc.
 %%% --------------------------------------------------------------------
--vc('$Id$ ').
 
 
 %%%----------------------------------------------------------------------
