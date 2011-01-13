@@ -5,7 +5,7 @@
 %%%           The interface is based on RFC 1823, and
 %%%           draft-ietf-asid-ldap-c-api-00.txt
 %%%
-%%% Copyright (C) 2000  Torbjörn Törnkvist
+%%% Copyright (C) 2000  Torbjî’šn Tî’šnkvist
 %%% Copyright (c) 2010 Torbjorn Tornkvist <tobbe@tornkvist.org>
 %%% See MIT-LICENSE at the top dir for licensing information.
 %%% 
@@ -178,9 +178,9 @@ mod_delete(Type, Values) when list(Type), list(Values)  -> m(delete, Type, Value
 mod_replace(Type, Values) when list(Type), list(Values) -> m(replace, Type, Values).
 
 m(Operation, Type, Values) ->
-    #'ModifyRequest_modification_SEQOF'{
+    #'ModifyRequest_changes_SEQOF'{
        operation = Operation,
-       modification = #'AttributeTypeAndValues'{
+       modification = #'PartialAttribute'{
 	 type = Type,
 	 vals = Values}}.
 
@@ -554,7 +554,7 @@ gen_req({modify, Obj, Mod}) ->
     v_modifications(Mod),
     {modifyRequest, 
      #'ModifyRequest'{object       = Obj,
-		      modification = Mod}};
+		      changes = Mod}};
 gen_req({modify_dn, Entry, NewRDN, DelOldRDN, NewSup}) ->
     {modDNRequest,
      #'ModifyDNRequest'{entry        = Entry,

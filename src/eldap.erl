@@ -164,9 +164,9 @@ mod_delete(Type, Values) when list(Type), list(Values)  -> m(delete, Type, Value
 mod_replace(Type, Values) when list(Type), list(Values) -> m(replace, Type, Values).
 
 m(Operation, Type, Values) ->
-    #'ModifyRequest_modification_SEQOF'{
+    #'ModifyRequest_changes_SEQOF'{
        operation = Operation,
-       modification = #'AttributeTypeAndValues'{
+       modification = #'PartialAttribute'{
 	 type = Type,
 	 vals = Values}}.
 
@@ -611,7 +611,7 @@ do_modify(Data, Obj, Mod) ->
 do_modify_0(Data, Obj, Mod) ->
     v_modifications(Mod),
     Req = #'ModifyRequest'{object = Obj,
-			   modification = Mod},
+			   changes = Mod},
     S = Data#eldap.fd,
     Id = bump_id(Data),
     log2(Data, "modify request = ~p~n", [Req]),
