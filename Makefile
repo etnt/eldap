@@ -1,7 +1,7 @@
+all: compile
 
-all:
-	(cd src;$(MAKE))
+compile:
+	./rebar compile
 
 clean:
-	(cd src;$(MAKE) clean)
-
+	./rebar clean
