@@ -32,7 +32,7 @@
 		fd,                  % Socket filedescriptor.
 		binddn = "",         % Name of the entry to bind as
 		passwd,              % Password for (above) entry
-		id = 0,              % LDAP Request ID 
+		id = 0,              % LDAP Request ID
 		log,                 % User provided log function
 		timeout = infinity,  % Request timeout
 		anon_auth = false,   % Allow anonymous authentication
@@ -56,12 +56,12 @@
 %%% list. Stop at the first successful connection attempt.
 %%% Valid Opts are:      Where:
 %%%
-%%%    {port, Port}        - Port is the port number 
+%%%    {port, Port}        - Port is the port number
 %%%    {log, F}            - F(LogLevel, FormatString, ListOfArgs)
 %%%    {timeout, milliSec} - request timeout
 %%%
 %%% --------------------------------------------------------------------
-open(Hosts) -> 
+open(Hosts) ->
     open(Hosts, []).
 
 open(Hosts, Opts) when is_list(Hosts), is_list(Opts) ->
@@ -86,7 +86,7 @@ controlling_process(Handle, Pid) when is_pid(Handle), is_pid(Pid)  ->
     recv(Handle).
 
 %%% --------------------------------------------------------------------
-%%% Authenticate ourselves to the Directory 
+%%% Authenticate ourselves to the Directory
 %%% using simple authentication.
 %%%
 %%%  Dn      -  The name of the entry to bind as
@@ -103,7 +103,7 @@ simple_bind(Handle, Dn, Passwd) when is_pid(Handle)  ->
 %%% to succeed. The parent of the entry MUST exist.
 %%% Example:
 %%%
-%%%  add(Handle, 
+%%%  add(Handle,
 %%%         "cn=Bill Valentine, ou=people, o=Bluetail AB, dc=bluetail, dc=com",
 %%%         [{"objectclass", ["person"]},
 %%%          {"cn", ["Bill Valentine"]},
@@ -117,9 +117,9 @@ add(Handle, Entry, Attributes) when is_pid(Handle),is_list(Entry),is_list(Attrib
 
 %%% Do sanity check !
 add_attrs(Attrs) ->
-    F = fun({Type,Vals}) when is_list(Type),is_list(Vals) -> 
+    F = fun({Type,Vals}) when is_list(Type),is_list(Vals) ->
 		%% Confused ? Me too... :-/
-		{'AddRequest_attributes',Type, Vals} 
+		{'AddRequest_attributes',Type, Vals}
 	end,
     case catch lists:map(F, Attrs) of
 	{'EXIT', _} -> throw({error, attribute_values});
@@ -127,11 +127,11 @@ add_attrs(Attrs) ->
     end.
 
 %%% --------------------------------------------------------------------
-%%% Delete an entry. The entry consists of the DN of 
+%%% Delete an entry. The entry consists of the DN of
 %%% the entry to be deleted.
 %%% Example:
 %%%
-%%%  delete(Handle, 
+%%%  delete(Handle,
 %%%         "cn=Bill Valentine, ou=people, o=Bluetail AB, dc=bluetail, dc=com"
 %%%        )
 %%% --------------------------------------------------------------------
@@ -144,10 +144,10 @@ delete(Handle, Entry) when is_pid(Handle), is_list(Entry) ->
 %%% operations can be performed as one atomic operation.
 %%% Example:
 %%%
-%%%  modify(Handle, 
+%%%  modify(Handle,
 %%%         "cn=Torbjorn Tornkvist, ou=people, o=Bluetail AB, dc=bluetail, dc=com",
 %%%         [replace("telephoneNumber", ["555 555 00"]),
-%%%          add("description", ["LDAP hacker"])] 
+%%%          add("description", ["LDAP hacker"])]
 %%%        )
 %%% --------------------------------------------------------------------
 modify(Handle, Object, Mods) when is_pid(Handle), is_list(Object), is_list(Mods) ->
@@ -155,7 +155,7 @@ modify(Handle, Object, Mods) when is_pid(Handle), is_list(Object), is_list(Mods)
     recv(Handle).
 
 %%%
-%%% Modification operations. 
+%%% Modification operations.
 %%% Example:
 %%%            replace("telephoneNumber", ["555 555 00"])
 %%%
@@ -175,16 +175,16 @@ m(Operation, Type, Values) ->
 %%% operations can be performed as one atomic operation.
 %%% Example:
 %%%
-%%%  modify_dn(Handle, 
+%%%  modify_dn(Handle,
 %%%    "cn=Bill Valentine, ou=people, o=Bluetail AB, dc=bluetail, dc=com",
 %%%    "cn=Ben Emerson",
 %%%    true,
 %%%    ""
 %%%        )
 %%% --------------------------------------------------------------------
-modify_dn(Handle, Entry, NewRDN, DelOldRDN, NewSup) 
+modify_dn(Handle, Entry, NewRDN, DelOldRDN, NewSup)
   when is_pid(Handle),is_list(Entry),is_list(NewRDN),is_atom(DelOldRDN),is_list(NewSup) ->
-    send(Handle, {modify_dn, Entry, NewRDN, 
+    send(Handle, {modify_dn, Entry, NewRDN,
 		  bool_p(DelOldRDN), optional(NewSup)}),
     recv(Handle).
 
@@ -196,7 +196,7 @@ optional([])    -> asn1_NOVALUE;
 optional(Value) -> Value.
 
 %%% --------------------------------------------------------------------
-%%% Synchronous search of the Directory returning a 
+%%% Synchronous search of the Directory returning a
 %%% requested set of attributes.
 %%%
 %%%  Example:
@@ -234,7 +234,7 @@ call_search(Handle, A) ->
 
 parse_search_args(Args) ->
     parse_search_args(Args, #eldap_search{scope = wholeSubtree}).
-    
+
 parse_search_args([{base, Base}|T],A) ->
     parse_search_args(T,A#eldap_search{base = Base});
 parse_search_args([{filter, Filter}|T],A) ->
@@ -282,7 +282,7 @@ av_assert(Desc, Value) ->
 %%%
 %%% Filter to check for the presence of an attribute
 %%%
-present(Attribute) when is_list(Attribute) -> 
+present(Attribute) when is_list(Attribute) ->
     {present, Attribute}.
 
 
@@ -301,11 +301,11 @@ present(Attribute) when is_list(Attribute) ->
 %%% Example: substrings("sn",[{initial,"To"},{any,"kv"},{final,"st"}])
 %%% will match entries containing:  'sn: Tornkvist'
 %%%
-substrings(Type, SubStr) when is_list(Type), is_list(SubStr) -> 
+substrings(Type, SubStr) when is_list(Type), is_list(SubStr) ->
     Ss = {'SubstringFilter_substrings',v_substr(SubStr)},
     {substrings,#'SubstringFilter'{type = Type,
 				   substrings = Ss}}.
-    
+
 %%% --------------------------------------------------------------------
 %%% Worker process. We keep track of a controlling process to
 %%% be able to terminate together with it.
@@ -345,7 +345,7 @@ parse_args([H|_], Cpid, _) ->
     exit(wrong_option);
 parse_args([], _, Data) ->
     Data.
-		  
+
 %%% Try to connect to the hosts in the listed order,
 %%% and stop with the first one to which a successful
 %%% connection is made.
@@ -411,7 +411,7 @@ loop(Cpid, Data) ->
 	    ?PRINT("New Cpid is: ~p~n",[NewCpid]),
 	    loop(NewCpid, Data);
 
-	{From, close} ->
+	{_From, close} ->
 	    unlink(Cpid),
 	    exit(closed);
 
@@ -442,7 +442,7 @@ do_simple_bind(Data, Dn, Passwd) ->
     do_the_simple_bind(Data, Dn, Passwd).
 
 do_the_simple_bind(Data, Dn, Passwd) ->
-    case catch exec_simple_bind(Data#eldap{binddn = Dn, 
+    case catch exec_simple_bind(Data#eldap{binddn = Dn,
 					   passwd = Passwd,
 					   id     = bump_id(Data)}) of
 	{ok,NewData} -> {ok,NewData};
@@ -452,14 +452,14 @@ do_the_simple_bind(Data, Dn, Passwd) ->
 
 exec_simple_bind(Data) ->
     Req = #'BindRequest'{version        = Data#eldap.version,
-			 name           = Data#eldap.binddn,  
+			 name           = Data#eldap.binddn,
 			 authentication = {simple, Data#eldap.passwd}},
     log2(Data, "bind request = ~p~n", [Req]),
     Reply = request(Data#eldap.fd, Data, Data#eldap.id, {bindRequest, Req}),
-    log2(Data, "bind reply = ~p~n", [Reply]),    
+    log2(Data, "bind reply = ~p~n", [Reply]),
     exec_simple_bind_reply(Data, Reply).
 
-exec_simple_bind_reply(Data, {ok,Msg}) when 
+exec_simple_bind_reply(Data, {ok,Msg}) when
   Msg#'LDAPMessage'.messageID == Data#eldap.id ->
     case Msg#'LDAPMessage'.protocolOp of
 	{bindResponse, Result} ->
@@ -517,7 +517,7 @@ do_search_0(Data, A) ->
 			  },
     Id = bump_id(Data),
     collect_search_responses(Data#eldap{id=Id}, Req, Id).
-    
+
 %%% The returned answers cames in one packet per entry
 %%% mixed with possible referals
 
@@ -526,25 +526,25 @@ collect_search_responses(Data, Req, ID) ->
     log2(Data, "search request = ~p~n", [Req]),
     send_request(S, Data, ID, {searchRequest, Req}),
     Resp = recv_response(S, Data),
-    log2(Data, "search reply = ~p~n", [Resp]),    
+    log2(Data, "search reply = ~p~n", [Resp]),
     collect_search_responses(Data, S, ID, Resp, [], []).
 
-collect_search_responses(Data, S, ID, {ok,Msg}, Acc, Ref) 
+collect_search_responses(Data, S, ID, {ok,Msg}, Acc, Ref)
   when is_record(Msg,'LDAPMessage') ->
     case Msg#'LDAPMessage'.protocolOp of
 	{'searchResDone',R} when R#'LDAPResult'.resultCode == success ->
-	    log2(Data, "search reply = searchResDone ~n", []),    
+	    log2(Data, "search reply = searchResDone ~n", []),
 	    {ok,Acc,Ref,Data};
 	{'searchResEntry',R} when is_record(R,'SearchResultEntry') ->
 	    Resp = recv_response(S, Data),
-	    log2(Data, "search reply = ~p~n", [Resp]),    
+	    log2(Data, "search reply = ~p~n", [Resp]),
 	    collect_search_responses(Data, S, ID, Resp, [R|Acc], Ref);
 	{'searchResRef',R} ->
 	    %% At the moment we don't do anyting sensible here since
 	    %% I haven't been able to trigger the server to generate
 	    %% a response like this.
 	    Resp = recv_response(S, Data),
-	    log2(Data, "search reply = ~p~n", [Resp]),    
+	    log2(Data, "search reply = ~p~n", [Resp]),
 	    collect_search_responses(Data, S, ID, Resp, Acc, [R|Ref]);
 	Else ->
 	    throw({error,Else})
@@ -571,7 +571,7 @@ do_add_0(Data, Entry, Attrs) ->
     Id = bump_id(Data),
     log2(Data, "add request = ~p~n", [Req]),
     Resp = request(S, Data, Id, {addRequest, Req}),
-    log2(Data, "add reply = ~p~n", [Resp]),    
+    log2(Data, "add reply = ~p~n", [Resp]),
     check_reply(Data#eldap{id = Id}, Resp, addResponse).
 
 
@@ -592,7 +592,7 @@ do_delete_0(Data, Entry) ->
     Id = bump_id(Data),
     log2(Data, "del request = ~p~n", [Entry]),
     Resp = request(S, Data, Id, {delRequest, Entry}),
-    log2(Data, "del reply = ~p~n", [Resp]),    
+    log2(Data, "del reply = ~p~n", [Resp]),
     check_reply(Data#eldap{id = Id}, Resp, delResponse).
 
 
@@ -616,7 +616,7 @@ do_modify_0(Data, Obj, Mod) ->
     Id = bump_id(Data),
     log2(Data, "modify request = ~p~n", [Req]),
     Resp = request(S, Data, Id, {modifyRequest, Req}),
-    log2(Data, "modify reply = ~p~n", [Resp]),    
+    log2(Data, "modify reply = ~p~n", [Resp]),
     check_reply(Data#eldap{id = Id}, Resp, modifyResponse).
 
 %%% --------------------------------------------------------------------
@@ -640,7 +640,7 @@ do_modify_dn_0(Data, Entry, NewRDN, DelOldRDN, NewSup) ->
     Id = bump_id(Data),
     log2(Data, "modify DN request = ~p~n", [Req]),
     Resp = request(S, Data, Id, {modDNRequest, Req}),
-    log2(Data, "modify DN reply = ~p~n", [Resp]),    
+    log2(Data, "modify DN reply = ~p~n", [Resp]),
     check_reply(Data#eldap{id = Id}, Resp, modDNResponse).
 
 %%% --------------------------------------------------------------------
@@ -697,7 +697,7 @@ check_tag(Data) ->
     end.
 
 %%% Check for expected kind of reply
-check_reply(Data, {ok,Msg}, Op) when 
+check_reply(Data, {ok,Msg}, Op) when
   Msg#'LDAPMessage'.messageID == Data#eldap.id ->
     case Msg#'LDAPMessage'.protocolOp of
 	{Op, Result} ->
@@ -739,7 +739,7 @@ v_substr([{Key,Str}|T]) when is_list(Str),Key==initial;Key==any;Key==final ->
     [{Key,Str}|v_substr(T)];
 v_substr([H|_]) ->
     throw({error,{substring_arg,H}});
-v_substr([]) -> 
+v_substr([]) ->
     [].
 v_scope(baseObject)   -> baseObject;
 v_scope(singleLevel)  -> singleLevel;
@@ -764,12 +764,12 @@ v_attributes(Attrs) ->
 %%% Log routines. Call a user provided log routine F.
 %%% --------------------------------------------------------------------
 
-log1(Data, Str, Args) -> log(Data, Str, Args, 1).
+%log1(Data, Str, Args) -> log(Data, Str, Args, 1).
 log2(Data, Str, Args) -> log(Data, Str, Args, 2).
 
 log(Data, Str, Args, Level) when is_function(Data#eldap.log) ->
     catch (Data#eldap.log)(Level, Str, Args);
-log(_, _, _, _) -> 
+log(_, _, _, _) ->
     ok.
 
 
@@ -798,10 +798,10 @@ ldap_closed_p(Data, Emsg) ->
 	{error,_} -> {error, ldap_closed};
 	_         -> {error,Emsg}
     end.
-    
+
 bump_id(Data) -> Data#eldap.id + 1.
 
-    
+
 %%% --------------------------------------------------------------------
 %%% parse_dn/1  -  Implementation of RFC 2253:
 %%%
@@ -810,14 +810,14 @@ bump_id(Data) -> Data#eldap.id + 1.
 %%% Test cases:
 %%%
 %%%  The simplest case:
-%%%  
+%%%
 %%%  1> eldap:parse_dn("CN=Steve Kille,O=Isode Limited,C=GB").
 %%%  {ok,[[{attribute_type_and_value,"CN","Steve Kille"}],
 %%%       [{attribute_type_and_value,"O","Isode Limited"}],
 %%%       [{attribute_type_and_value,"C","GB"}]]}
 %%%
 %%%  The first RDN is multi-valued:
-%%%  
+%%%
 %%%  2> eldap:parse_dn("OU=Sales+CN=J. Smith,O=Widget Inc.,C=US").
 %%%  {ok,[[{attribute_type_and_value,"OU","Sales"},
 %%%        {attribute_type_and_value,"CN","J. Smith"}],
@@ -833,7 +833,7 @@ bump_id(Data) -> Data#eldap.id + 1.
 %%%
 %%%  A value contains a carriage return:
 %%%
-%%%  4> eldap:parse_dn("CN=Before                                    
+%%%  4> eldap:parse_dn("CN=Before
 %%%  4> After,O=Test,C=GB").
 %%%  {ok,[[{attribute_type_and_value,"CN","Before\nAfter"}],
 %%%       [{attribute_type_and_value,"O","Test"}],
@@ -843,33 +843,33 @@ bump_id(Data) -> Data#eldap.id + 1.
 %%%  {ok,[[{attribute_type_and_value,"CN","Before\\0DAfter"}],
 %%%       [{attribute_type_and_value,"O","Test"}],
 %%%       [{attribute_type_and_value,"C","GB"}]]}
-%%%  
+%%%
 %%%  An RDN in OID form:
-%%%  
+%%%
 %%%  6> eldap:parse_dn("1.3.6.1.4.1.1466.0=#04024869,O=Test,C=GB").
 %%%  {ok,[[{attribute_type_and_value,"1.3.6.1.4.1.1466.0","#04024869"}],
 %%%       [{attribute_type_and_value,"O","Test"}],
 %%%       [{attribute_type_and_value,"C","GB"}]]}
-%%%  
+%%%
 %%%
 %%% --------------------------------------------------------------------
 
 parse_dn("") -> % empty DN string
-    {ok,[]};  
+    {ok,[]};
 parse_dn([H|_] = Str) when H=/=$, -> % 1:st name-component !
     case catch parse_name(Str,[]) of
 	{'EXIT',Reason} -> {parse_error,internal_error,Reason};
 	Else            -> Else
     end.
 
-parse_name("",Acc)  -> 
+parse_name("",Acc)  ->
     {ok,lists:reverse(Acc)};
 parse_name([$,|T],Acc) -> % N:th name-component !
     parse_name(T,Acc);
 parse_name(Str,Acc) ->
     {Rest,NameComponent} = parse_name_component(Str),
     parse_name(Rest,[NameComponent|Acc]).
-    
+
 parse_name_component(Str) ->
     parse_name_component(Str,[]).
 
@@ -883,7 +883,7 @@ parse_name_component(Str,Acc) ->
 
 parse_attribute_type_and_value(Str) ->
     case parse_attribute_type(Str) of
-	{Rest,[]} -> 
+	{_Rest,[]} ->
 	    parse_error(expecting_attribute_type,Str);
 	{Rest,Type} ->
 	    Rest2 = parse_equal_sign(Rest),
@@ -895,14 +895,14 @@ parse_attribute_type_and_value(Str) ->
 -define(IS_DIGIT(X) , X>=$0,X=<$9 ).
 -define(IS_SPECIAL(X) , X==$,;X==$=;X==$+;X==$<;X==$>;X==$#;X==$; ).
 -define(IS_QUOTECHAR(X) , X=/=$\\,X=/=$" ).
--define(IS_STRINGCHAR(X) , 
+-define(IS_STRINGCHAR(X) ,
 	X=/=$,,X=/=$=,X=/=$+,X=/=$<,X=/=$>,X=/=$#,X=/=$;,?IS_QUOTECHAR(X) ).
 -define(IS_HEXCHAR(X) , ?IS_DIGIT(X);X>=$a,X=<$f;X>=$A,X=<$F ).
 
 parse_attribute_type([H|T]) when ?IS_ALPHA(H) ->
     %% NB: It must be an error in the RFC in the definition
     %% of 'attributeType', should be: (ALPHA *keychar)
-    {Rest,KeyChars} = parse_keychars(T),  
+    {Rest,KeyChars} = parse_keychars(T),
     {Rest,[H|KeyChars]};
 parse_attribute_type([H|_] = Str) when ?IS_DIGIT(H) ->
     parse_oid(Str);
@@ -914,13 +914,13 @@ parse_attribute_type(Str) ->
 %%% Is a hexstring !
 parse_attribute_value([$#,X,Y|T]) when ?IS_HEXCHAR(X),?IS_HEXCHAR(Y) ->
     {Rest,HexString} = parse_hexstring(T),
-    {Rest,[$#,X,Y|HexString]}; 
+    {Rest,[$#,X,Y|HexString]};
 %%% Is a "quotation-sequence" !
-parse_attribute_value([$"|T]) -> 
+parse_attribute_value([$"|T]) ->
     {Rest,Quotation} = parse_quotation(T),
     {Rest,[$"|Quotation]};
 %%% Is a stringchar , pair or Empty !
-parse_attribute_value(Str) -> 
+parse_attribute_value(Str) ->
     parse_string(Str).
 
 parse_hexstring(Str) ->
@@ -933,31 +933,31 @@ parse_hexstring(T,Acc) ->
 
 parse_quotation([$"|T]) -> % an empty: ""  is ok !
     {T,[$"]};
-parse_quotation(Str) -> 
+parse_quotation(Str) ->
     parse_quotation(Str,[]).
 
 %%% Parse to end of quotation
-parse_quotation([$"|T],Acc) -> 
+parse_quotation([$"|T],Acc) ->
     {T,lists:reverse([$"|Acc])};
-parse_quotation([X|T],Acc) when ?IS_QUOTECHAR(X) -> 
+parse_quotation([X|T],Acc) when ?IS_QUOTECHAR(X) ->
     parse_quotation(T,[X|Acc]);
-parse_quotation([$\\,X|T],Acc) when ?IS_SPECIAL(X) -> 
+parse_quotation([$\\,X|T],Acc) when ?IS_SPECIAL(X) ->
     parse_quotation(T,[X,$\\|Acc]);
-parse_quotation([$\\,$\\|T],Acc) -> 
+parse_quotation([$\\,$\\|T],Acc) ->
     parse_quotation(T,[$\\,$\\|Acc]);
-parse_quotation([$\\,$"|T],Acc) -> 
+parse_quotation([$\\,$"|T],Acc) ->
     parse_quotation(T,[$",$\\|Acc]);
-parse_quotation([$\\,X,Y|T],Acc) when ?IS_HEXCHAR(X),?IS_HEXCHAR(Y) -> 
+parse_quotation([$\\,X,Y|T],Acc) when ?IS_HEXCHAR(X),?IS_HEXCHAR(Y) ->
     parse_quotation(T,[Y,X,$\\|Acc]);
-parse_quotation(T,_) -> 
+parse_quotation(T,_) ->
     parse_error(expecting_double_quote_mark,T).
 
-parse_string(Str) -> 
+parse_string(Str) ->
     parse_string(Str,[]).
 
-parse_string("",Acc) -> 
+parse_string("",Acc) ->
     {"",lists:reverse(Acc)};
-parse_string([H|T],Acc) when ?IS_STRINGCHAR(H) -> 
+parse_string([H|T],Acc) when ?IS_STRINGCHAR(H) ->
     parse_string(T,[H|Acc]);
 parse_string([$\\,X|T],Acc) when ?IS_SPECIAL(X) -> % is a pair !
     parse_string(T,[X,$\\|Acc]);
@@ -989,7 +989,7 @@ parse_oid([H|T], Acc) when ?IS_DIGIT(H) ->
 parse_oid(T, Acc) ->
     {T,lists:reverse(Acc)}.
 
-parse_error(Emsg,Rest) -> 
+parse_error(Emsg,Rest) ->
     throw({parse_error,Emsg,Rest}).
 
 
@@ -1020,7 +1020,7 @@ parse_ldap_url("ldap://" ++ Rest1 = Str) ->
 	{ok,DN} ->
             %% We stop parsing here for now and leave
             %% 'scope', 'filter' and 'extensions' to
-            %% be implemented later if needed.				      
+            %% be implemented later if needed.
 	    {_Rest4,Attributes} = parse_attributes(Rest3),
 	    {ok,HostPort,DN,Attributes}
     end.
@@ -1039,7 +1039,7 @@ parse_attributes([$?|Tail]) ->
 parse_hostport(Str) ->
     {HostPort,Rest} = split_string(Str,$/),
     case split_string(HostPort,$:) of
-	{Shost,[]} -> 
+	{Shost,[]} ->
 	    {Rest,{parse_host(Rest,Shost),?LDAP_PORT}};
 	{Shost,[$:|Sport]} ->
 	    {Rest,{parse_host(Rest,Shost),
@@ -1068,7 +1068,7 @@ validate_host(Shost) ->
 	    end
     end.
 
-    
+
 split_string(Str,Key) ->
     Pred = fun(X) when X==Key -> false; (_) -> true end,
     lists:splitwith(Pred, Str).
