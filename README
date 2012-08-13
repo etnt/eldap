@@ -1,3 +1,7 @@
+
+*** NOTE: eldap IS NOW PART OF R15B ***
+(i.e no development should be made here anylonger)
+
 Hi, 
 
 This is 'eldap', the Erlang LDAP library.
